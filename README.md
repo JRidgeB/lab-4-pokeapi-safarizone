@@ -4,9 +4,12 @@
 - [x] get all types minus stellar and unknown
 - [x] get all biomes in a 2d table, along with names
 - [ ] get several ball options with catch rates
-- [ ] get catch percentage using catch rate of both pokemon and ball
+- [x] get initial catch percentage using catch rate of both pokemon and ball
+- [ ] make catching game
 - [ ] get encounter rate of different types of grass
 - [ ] get different encounter conditions
+- [ ] make menu 
+- [ ] make randomly generated biomes, pokemon  
 
 ### issues
 - [ ] pokeapi does not list catch rating of each ball [10/8/2024]
