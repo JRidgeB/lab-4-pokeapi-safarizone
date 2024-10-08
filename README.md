@@ -7,10 +7,12 @@
 - [x] get initial catch percentage using catch rate of both pokemon and ball
 - [x] make catching game
 - [ ] get different encounter conditions
-- [ ] make menu 
-- [ ] make randomly generated biomes, pokemon  
+- [x] make menu 
+- [x] make randomly generated biomes, pokemon  
 
 ### issues
 - [ ] pokeapi does not list catch rating of each ball [10/8/2024]
+- [ ] pokeapi does not have a list of all pokemon that require a time of day to apear [ 10/8/2024]
+- [ ] code runs, but will error when you fail to catch a pokemon  [10/8/2024]
 
 

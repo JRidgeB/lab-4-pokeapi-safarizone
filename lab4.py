@@ -30,8 +30,8 @@ Base.metadata.create_all(bind=engine)
 # i removed stellar and unknown types as while listed in api, no pokemon should be in them
 pokeapi_url_type = "https://pokeapi.co/api/v2/type/"
 response_type = requests.get(pokeapi_url_type)
-data = response_type.json()
-pokemon_types = [type_info['name'] for type_info in data['results'] if type_info['name'] not in ['unknown', 'stellar']]
+typeData = response_type.json()
+pokemon_types = [type_info['name'] for type_info in typeData['results'] if type_info['name'] not in ['unknown', 'stellar']]
 #--------------------------------------
 #non-legendary pokemon
 #this removes pokemon that should not be in safari zones
@@ -184,7 +184,8 @@ def catchGame(catchFactor,pokename,speed):
         runaway = runaway * runaway
     if catchFactor > 255:
         catchFactor = 255
-    init = shaketable[catchFactor]
+    
+    init = shaketable[math.ceil(catchFactor)]
     while True:
         print("What would you like to do?\n1:Throw bait (decrease run chance, but also catch rate)\n2:Throw rock(increase catch rate but also run chance)\n3:Throw pokeball\n4:exit")
         choice = -1
@@ -196,7 +197,7 @@ def catchGame(catchFactor,pokename,speed):
             escape = run(runaway)
             if escape == True:
                 print(f"{pokename} ran away")
-                break
+                return None
         
         elif choice == '2':#rock
             runaway = runaway*2
@@ -204,21 +205,102 @@ def catchGame(catchFactor,pokename,speed):
             escape = run(runaway)
             if escape == True:
                 print(f"{pokename} ran away")
-                break
+                return None
         elif choice == '3': #catch
             catch = shake(shaketable,init,pokename)
             if catch == True:
                 print(f"you caught {pokename}!")
+                return pokename
             escape = run(runaway)
             if escape == True:
                 print(f"{pokename} ran away")
-                break
+                return None
         elif choice == '4':
-            break
+            return None
         else:
             print("invalid")
+print("Welcome to the Safari zone!! I hope you have a wonderful time! \nIt is 20 pokedollars to come in")
+enter = 0
+#------------------------------------------------
+#create safari biomes
+def createSafari(size):
+    Safari = [] #biome names
+    type1Arr = [] #type 1
+    type2Arr = [] #type 2
+    if size <= 1:
+        size = 1
+    for i in range(0,size):
 
-catchGame(50,"test",45)
+        type1 = random.randint(0,17)
+        type2 = random.randint(0,17)
+        while type1 == type2:
+            type1 = random.randint(0,17)
+            type2 = random.randint(0,17)
+        biome = biomes[type1,type2]
+        Safari.append(biome)
+        type1Arr.append(type1)
+        type2Arr.append(type2)
+    return Safari,type1Arr,type2Arr
+
+def randomPokemonOfType(type):
+    stype_url = f"https://pokeapi.co/api/v2/type/{type}"
+    stype_response = requests.get(stype_url)
+    stype_data = stype_response.json()
+    list = stype_data['pokemon']
+    return random.choice(list)['pokemon']
+
+
+def enterSafari(Safari,TypeOneArr,TypeTwoArr):
+    display = 0
+    print("Chose a biome below!!")
+    for string in Safari:
+        print(f"{display}:{str(string)}")
+        display = display + 1
+    choiceTemp = input("response? ")
+    choice = int(choiceTemp) 
+    try:
+
+        saf = Safari[choice]
+        t1 = TypeOneArr[choice]
+        t2 = TypeTwoArr[choice]
+        print(typeArr[t1])
+        randpoke = []
+        randpoke.append(randomPokemonOfType(typeArr[t1]))
+        randpoke.append(randomPokemonOfType(typeArr[t2]))
+        pokemon_details_url = randpoke[random.randint(0,1)]['url']
+        pokemon_details_response = requests.get(pokemon_details_url)
+        pokemon_details = pokemon_details_response.json()
+        name = pokemon_details['name']
+        speed = next(stat['base_stat'] for stat in pokemon_details['stats'] if stat['stat']['name'] == 'speed')
+        species_url = pokemon_details['species']['url']
+        species_response = requests.get(species_url)
+        species_data = species_response.json()
+        catch_rate = species_data['capture_rate']
+        return catchGame(catch_rate,name,speed)
+
+
+    except:
+        print("\nBad choice. Going back to main menu")
+        return None
+
+Safari,TypeOneArr,TypeTwoArr = createSafari(4)
+#----------------------------------------------
+pokemonCaught = []
+while True:
+    choice = input("\n\n--------------\nWhat would you like to do? \n1: Enter the safari \n2:Reset the safari\n3:exit\nResponse? ")
+    if choice == '3':
+        break
+    elif choice == '1':
+        poke = enterSafari(Safari,TypeOneArr,TypeTwoArr)
+        if poke != None:
+            pokemonCaught.append(poke)
+        
+
+
+
+
+    
+
 
 
 

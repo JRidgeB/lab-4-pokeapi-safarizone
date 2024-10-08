@@ -34,6 +34,7 @@ class PokemonType(Base):
     __tablename__ = "types"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
+    pokemon = Column(String)
 
 class PokemonSpecies(Base):
     __tablename__ = "pokemon_species"
