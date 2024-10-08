@@ -6,7 +6,6 @@
 - [ ] get several ball options with catch rates
 - [x] get initial catch percentage using catch rate of both pokemon and ball
 - [ ] make catching game
-- [ ] get encounter rate of different types of grass
 - [ ] get different encounter conditions
 - [ ] make menu 
 - [ ] make randomly generated biomes, pokemon  
