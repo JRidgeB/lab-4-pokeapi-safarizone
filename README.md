@@ -5,7 +5,7 @@
 - [x] get all biomes in a 2d table, along with names
 - [ ] get several ball options with catch rates
 - [x] get initial catch percentage using catch rate of both pokemon and ball
-- [ ] make catching game
+- [x] make catching game
 - [ ] get different encounter conditions
 - [ ] make menu 
 - [ ] make randomly generated biomes, pokemon  

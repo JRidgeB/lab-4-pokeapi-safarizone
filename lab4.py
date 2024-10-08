@@ -7,12 +7,14 @@
 
 #includes-----------------------------------------------------------------------------
 from sqlalchemy import Column, Integer, String, Double, BOOLEAN
+import random
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 from data_model import Base, Pokemon, PokemonSpecies
 import requests
 SQLALCHEMY_DATABASE_URL = "sqlite:///./data.db"
@@ -79,6 +81,152 @@ def initCatchProb(pokeRating, ballRating):
         catchFactor = 1
     catchFactor = catchFactor * ballRating
     return catchFactor 
+
+#------------------------------------------------
+def run(runaway):
+    #this mimics the run away process in gen 3 safari
+    chance = random.randint(0,100)
+    if chance < runaway:
+        return True
+    else:
+        return False
+    
+def shake(shakeTable,rate,pokename):
+    #this mimics kinda that three shakes when you catch a pokemon
+    catch1 = random.randint(0,255)
+    catch2 = random.randint(0,255)
+    catch3 = random.randint(0,255)
+    threshhold = shakeTable[math.ceil(rate)]
+    if catch1 < threshhold:
+        print(f"*click! you caught the {pokename}")
+        return True
+    print("shake...")
+    if catch2 < threshhold:
+        print(f"*click! you caught the {pokename}")
+        return True
+    print("shake...")
+    if catch3 < threshhold:
+        print(f"*click! you caught the {pokename}")
+        return True
+    print("shake...\nOh no! it broke out")
+    return False
+
+
+#catch game
+def catchGame(catchFactor,pokename,speed):
+    #the catch game will use the catch method of the safari from gen 3, how ever to make it easier,
+    #I will use the shake probability from gen 2, which is...
+    '''First, a check is performed to determine whether the Pokémon is caught at all. 
+    A random number between 0 and 255 is generated, and if this number is less than or equal to a, 
+    the Pokémon is caught.
+    Shake checks are only performed if the Pokémon is not caught.
+    A single shake check consists of generating a random number between 0 and 255 and comparing it to b. 
+    his is done at most three times, but if the number generated in a given shake check is greater 
+    than or equal to b, no further shake checks will be performed. 
+    The number of times the ball shakes is the same as the number of shake checks that were performed. 
+    The table is essentially a very low-precision lookup table with numbers corresponding 
+    to the shake rate in later generations, so ultimately, aside from rounding errors 
+    (very bad ones in this case), the shake and capture rate remain similar between Generation II and 
+    the formula later used in Generation III.'''
+    #source:https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Shake_probability_3
+    shaketable = []
+    total = 0
+    for i in range(0,254):
+        if i in range(0,1):
+            shaketable.append(63)
+        elif i == 2:
+            shaketable.append(75)
+        elif i == 3:
+            shaketable.append(75)
+        elif i == 5:
+            shaketable.append(75)
+        elif i == 255:
+            shaketable.append(255)
+        elif i in range(6,7):
+            shaketable.append(103)
+        elif i in range(8,10):
+            shaketable.append(113)
+        elif i in range(11,15):
+            shaketable.append(126)
+        elif i in range(16,20):
+            shaketable.append(134)
+        elif i in range(21,30):
+            shaketable.append(149)
+        elif i in range(31,40):
+            shaketable.append(160)
+        elif i in range(41,50):
+            shaketable.append(169)
+        elif i in range(51,60):
+            shaketable.append(177)
+        elif i in range(61,80):
+            shaketable.append(191)
+        elif i in range(81,100):
+            shaketable.append(201)
+        elif i in range(101,120):
+            shaketable.append(211)
+        elif i in range(121,140):
+            shaketable.append(220)
+        elif i in range(141,160):
+            shaketable.append(227)
+        elif i in range(161,180):
+            shaketable.append(234)
+        elif i in range(181,200):
+            shaketable.append(240)
+        elif i in range(201,220):
+            shaketable.append(246)
+        elif i in range(221,240):
+            shaketable.append(251)
+        elif i in range(241,254):
+            shaketable.append(253)
+    print(f"You have encoutnered a {pokename}\n\n")
+    runaway = speed/10
+    if runaway > .5:
+        runaway = runaway * runaway
+    if catchFactor > 255:
+        catchFactor = 255
+    init = shaketable[catchFactor]
+    while True:
+        print("What would you like to do?\n1:Throw bait (decrease run chance, but also catch rate)\n2:Throw rock(increase catch rate but also run chance)\n3:Throw pokeball\n4:exit")
+        choice = -1
+        choice = input("Response? ")
+
+        if choice == '1':#bait
+            runaway = runaway/2
+            init = init/2
+            escape = run(runaway)
+            if escape == True:
+                print(f"{pokename} ran away")
+                break
+        
+        elif choice == '2':#rock
+            runaway = runaway*2
+            init = init*2
+            escape = run(runaway)
+            if escape == True:
+                print(f"{pokename} ran away")
+                break
+        elif choice == '3': #catch
+            catch = shake(shaketable,init,pokename)
+            if catch == True:
+                print(f"you caught {pokename}!")
+            escape = run(runaway)
+            if escape == True:
+                print(f"{pokename} ran away")
+                break
+        elif choice == '4':
+            break
+        else:
+            print("invalid")
+
+catchGame(50,"test",45)
+
+
+
+
+
+
+
+        
 
 
     
